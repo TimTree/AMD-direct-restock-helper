@@ -1,6 +1,6 @@
 # AMD Direct Restock Helper
 
-[**Download the latest release**](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest)
+[**Download the latest release [Source code (zip)]**](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest)
 
 Buying a new graphics card at MSRP is incredibly hard these days, thanks to sky-high demand from gamers, cryptocurrency miners, and scalpers. It oftentimes feels impossible to beat the bots before they snatch the cards.
 
@@ -42,15 +42,25 @@ To use the helper, you'll need the latest version of **Google Chrome** or **Chro
 
 I strongly recommend using the helper in a [separate Chrome profile](https://linuxhint.com/use_multiple_profiles_simultaneously_google_chrome/) so it doesn't interfere with your normal browsing data.
 
-1) Download the [latest release of AMD Direct Restock Helper](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest).
+1) Download the `Source code (zip)` of the [latest release of AMD Direct Restock Helper](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest).
 
-2) Unzip the download, revealing a `.crx` file.
+2) Unzip the download. One folder should be extracted.
 
-3) Go to the Chrome Extensions menu (`chrome://extensions/`). Drag the `.crx` file to the window to install.
+3) Go to the Chrome Extensions menu (`chrome://extensions/`). Enable Developer mode.
 
-![Drag the .crx file](img/README/InstallExtensionDragDrop.png)
+4) Click "Load unpacked" and select the extracted folder.
+
+![Load unpacked extension](img/README/LoadUnpacked.png)
 
 Congrats, you have installed AMD Direct Restock Helper!
+
+### Updating the helper
+
+The helper will notify you if a new update is available. To update:
+
+1) Remove the previous version of the helper from Chrome.
+
+2) Repeat the above installation steps.
 
 ### Setting up PayPal One Touch
 
@@ -166,8 +176,6 @@ I doubt Google would approve an extension that tries to automatically buy someth
 **How can I make sure this extension isn't malicious?**
 
 The extension is completely open source. If I really wanted to mess with your data, I've chosen a horrible way to do it. ;)
-
-If you don't trust the compiled `.crx` release, you can download the source directly and load the extension unpacked.
 
 The extension also cannot auto-update, killing any chance of me pulling a bait-and-switch. Whenever an update releases, you can inspect all the code changes to your satisfaction before installing.
 
