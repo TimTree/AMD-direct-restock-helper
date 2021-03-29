@@ -1,0 +1,86 @@
+{
+    "manifest_version": 2,
+    "name": "AMD Direct Restock Helper",
+    "description": "Checks for stock and initiates checkout for hard-to-buy products from AMD Direct (AMD.com)",
+    "version": "1.0",
+    "icons": {
+        "48": "img/icon48.png",
+        "128": "img/icon128.png"
+      },
+      "browser_action": {
+        "default_popup": "popup.html"
+      },
+      "background": {
+        "scripts": [
+            "js/background.js"
+        ]
+      },
+      "content_scripts": [
+        {
+        "matches": [
+          "https://www.amd.com/en/direct-buy/us",
+          "https://www.amd.com/en/direct-buy/ca",
+          "https://www.amd.com/en/direct-buy/at",
+          "https://www.amd.com/en/direct-buy/be",
+          "https://www.amd.com/en/direct-buy/cz",
+          "https://www.amd.com/en/direct-buy/dk",
+          "https://www.amd.com/en/direct-buy/fi",
+          "https://www.amd.com/en/direct-buy/fr",
+          "https://www.amd.com/en/direct-buy/de",
+          "https://www.amd.com/en/direct-buy/ie",
+          "https://www.amd.com/en/direct-buy/it",
+          "https://www.amd.com/en/direct-buy/lu",
+          "https://www.amd.com/en/direct-buy/nl",
+          "https://www.amd.com/en/direct-buy/pt",
+          "https://www.amd.com/en/direct-buy/es",
+          "https://www.amd.com/en/direct-buy/se",
+          "https://www.amd.com/en/direct-buy/gb"
+        ],
+        "run_at": "document_start",
+        "js": ["js/helperPane.js"]
+      },
+      {
+        "matches": [
+          "https://www.paypal.com/smart/button?style.label=checkout&style.size=responsive&style.color=gold&style.shape=pill&style.layout=horizontal&style.fundingicons=false&style.tagline=false&funding.allowed=card&funding.disallowed=credit%2Cvenmo*&locale.x=*&env=production&domain=js.digitalriver.com&*"
+        ],
+        "all_frames": true,
+        "run_at": "document_idle",
+        "js": ["js/autoclickPayPal.js"]
+      },
+      {
+        "matches": [
+          "https://www.amd.com/en/direct-buy/checkout/review/*/*"
+        ],
+        "run_at": "document_idle",
+        "js": ["js/autoCheckoutReview.js"]
+      },
+      {
+        "matches": [
+          "https://www.google.com/recaptcha/api2/anchor?*"
+        ],
+        "all_frames": true,
+        "run_at": "document_start",
+        "js": ["js/recapchaClick.js"]
+      },
+      {
+        "matches": [
+          "https://www.amd.com/en/direct-buy/checkout/payment/*/*",
+          "https://www.amd.com/en/direct-buy/checkout/review/*/*"
+        ],
+        "run_at": "document_idle",
+        "js": ["js/check503.js"]
+      }
+    ],
+    "permissions": [
+      "cookies",
+      "tabs",
+      "storage",
+      "notifications",
+      "*://amd.com/*",
+      "*://www.amd.com/*",
+      "*://paypal.com/*",
+      "*://www.paypal.com/*",
+      "*://google.com/recaptcha/*",
+      "*://www.google.com/recaptcha/*"
+    ]
+}
