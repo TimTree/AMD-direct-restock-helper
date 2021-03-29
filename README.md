@@ -124,7 +124,7 @@ Once you click "Review Order," the checkout review page loads (if the product is
 
 ![Checkout review](img/README/CheckoutReview.png)
 
-Once you complete the CAPTCHA, click PLACE ORDER and pray.
+Once you solve the CAPTCHA, click PLACE ORDER and pray.
 
 If you're booted back to the main products page after PLACE ORDER, that doesn't necessarily mean you've lost. Check your email. If PayPal said you've made a payment to DigitalRiver, you've won!
 
@@ -149,10 +149,13 @@ Keep in mind you should **adjust the min delay between requests** for each produ
 * Practice the checkout flow with the Ryzen 5800x (almost always in stock these days).
     * This is a good way to get a feel of the sound alert and check if PayPal One Touch is working properly.
     * It's ok to continue through PayPal to reach the checkout review page. You won't be charged unless you click PLACE ORDER (ABSOLUTELY don't click that; remember I'm not liable!).
-    * If you're not comfortable using PayPal for practice, you can reach the checkout review page with a bogus address/email/credit card number (Once again, DO NOT CLICK PLACE ORDER).
+    * If you're not comfortable using PayPal for practice, you can reach the checkout review page with a bogus address/email/credit card number (once again, DO NOT CLICK PLACE ORDER).
 
 * Determine your min delay between requests ahead of time.
     * You don't want to get IP banned during the restock timeframe. See if you can leave the helper running for at least an hour without an IP ban.
+
+* On restock day, disable your computer from sleeping when inactive.
+    * You have to be quick as soon as you hear the in-stock alert. No time to wake up your computer and log in with your password.
 
 * DO. NOT. HESITATE.
     * I cannot stress this enough. Don't let your logical brain push you out of that $999 RX 6900 XT you would have scoffed at in normal circumstances. Primal instincts. Go, go, go! Click, click, click! Buy, buy, buy!
