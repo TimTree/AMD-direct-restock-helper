@@ -1,5 +1,12 @@
 # AMD Direct Restock Helper
 
+
+---
+<span style="font-size:1.5em;"><strong>AMD Direct is onto us! They recently added a CAPTCHA to add to cart, which breaks the helper. DO NOT USE until a workaround is found (which won't be trivial).</strong></span>
+
+---
+
+
 [**Download the latest release [Source code (zip)]**](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest)
 
 Buying a new graphics card at MSRP is incredibly hard these days, thanks to sky-high demand from gamers, cryptocurrency miners, and scalpers. It oftentimes feels impossible to beat the bots before they snatch the cards.

@@ -20,12 +20,13 @@ function clearAMDCookies(callback) {
   });
 }
 
-function repeatTabCheck(sender, callback) {
+function tabDetection(sender, callback) {
+  const isIncognito = !!(sender.tab.incognito);
   chrome.tabs.query({ url: 'https://www.amd.com/en/direct-buy/*' }, (tabs) => {
-    if (tabs.map((x) => x.incognito).filter((x) => x === sender.tab.incognito).length > 1) {
-      callback({ response: 'repeat' });
+    if (tabs.map((x) => x.incognito).filter((x) => x === isIncognito).length > 1) {
+      callback({ isIncognito, isRepeat: true });
     } else {
-      callback({ response: 'norepeat' });
+      callback({ isIncognito, isRepeat: false });
     }
   });
 }
@@ -52,8 +53,8 @@ chrome.runtime.onMessage.addListener(
       case 'playIPBanSound':
         IPBanAudio.play();
         break;
-      case 'repeatTabCheck':
-        repeatTabCheck(sender, sendResponse);
+      case 'tabDetection':
+        tabDetection(sender, sendResponse);
         break;
       case 'notification':
         chrome.notifications.create('', request.options);
