@@ -82,5 +82,6 @@
       "*://www.paypal.com/*",
       "*://google.com/recaptcha/*",
       "*://www.google.com/recaptcha/*"
-    ]
+    ],
+    "incognito": "split"
 }
