@@ -42,27 +42,35 @@ async function checkForUpdate() {
 
 chrome.runtime.onMessage.addListener(
   (request, sender, sendResponse) => {
-    if (request.command === 'clearAMDCookies') {
-      clearAMDCookies(sendResponse);
-    } else if (request.command === 'playInStockSound') {
-      inStockAudio.play();
-    } else if (request.command === 'playIPBanSound') {
-      IPBanAudio.play();
-    } else if (request.command === 'notifyInStock') {
-      IPBanAudio.play();
-    } else if (request.command === 'repeatTabCheck') {
-      repeatTabCheck(sender, sendResponse);
-    } else if (request.type === 'notification') { chrome.notifications.create('', request.options); } else if (request.command === 'checkForUpdate') {
-      checkForUpdate()
-        .then((data) => {
-          if (Number.isNaN(data) && `v${chrome.runtime.getManifest().version}` !== data) {
-            sendResponse({ response: true });
-          } else {
-            sendResponse({ response: false });
-          }
-        }).catch((reason) => {
-          sendResponse({ response: `error${reason.message}` });
-        });
+    switch (request.command) {
+      case 'clearAMDCookies':
+        clearAMDCookies(sendResponse);
+        break;
+      case 'playInStockSound':
+        inStockAudio.play();
+        break;
+      case 'playIPBanSound':
+        IPBanAudio.play();
+        break;
+      case 'repeatTabCheck':
+        repeatTabCheck(sender, sendResponse);
+        break;
+      case 'notification':
+        chrome.notifications.create('', request.options);
+        break;
+      case 'checkForUpdate':
+        checkForUpdate()
+          .then((data) => {
+            if (Number.isNaN(Number(data)) && `v${chrome.runtime.getManifest().version}` !== data) {
+              sendResponse({ response: true });
+            } else {
+              sendResponse({ response: false });
+            }
+          }).catch((reason) => {
+            sendResponse({ response: `error${reason.message}` });
+          });
+        break;
+      default:
     }
     return true;
   },

@@ -178,7 +178,7 @@ function sequentialCartCheck(productArg2) {
                 chrome.runtime.sendMessage({ command: 'playIPBanSound' }, () => {});
               }
               chrome.runtime.sendMessage({
-                type: 'notification',
+                command: 'notification',
                 options: {
                   title: 'Temporarily IP banned from AMD.com', message: 'Consider pausing the script for a few minutes and increasing the min delay between requests.', iconUrl: '../img/icon128.png', type: 'basic',
                 },
@@ -202,7 +202,7 @@ function sequentialCartCheck(productArg2) {
               }
               addToCartAndCheckout(data[6].data);
               chrome.runtime.sendMessage({
-                type: 'notification',
+                command: 'notification',
                 options: {
                   title: `${productNames[productArg2]} IN STOCK`, message: 'GO, GO, GO!!!', iconUrl: '../img/icon128.png', type: 'basic',
                 },
