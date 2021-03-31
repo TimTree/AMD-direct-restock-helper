@@ -20,9 +20,9 @@ function clearAMDCookies(callback) {
   });
 }
 
-function repeatTabCheck(callback) {
+function repeatTabCheck(sender, callback) {
   chrome.tabs.query({ url: 'https://www.amd.com/en/direct-buy/*' }, (tabs) => {
-    if (tabs.length > 1) {
+    if (tabs.map((x) => x.incognito).filter((x) => x === sender.tab.incognito).length > 1) {
       callback({ response: 'repeat' });
     } else {
       callback({ response: 'norepeat' });
@@ -51,18 +51,18 @@ chrome.runtime.onMessage.addListener(
     } else if (request.command === 'notifyInStock') {
       IPBanAudio.play();
     } else if (request.command === 'repeatTabCheck') {
-      repeatTabCheck(sendResponse);
+      repeatTabCheck(sender, sendResponse);
     } else if (request.type === 'notification') { chrome.notifications.create('', request.options); } else if (request.command === 'checkForUpdate') {
       checkForUpdate()
-      .then((data) => {
-        if (isNaN(data) && `v${chrome.runtime.getManifest().version}` !== data) {
-          sendResponse({ response: true });
-        } else {
-          sendResponse({ response: false });
-        }
-      }).catch((reason) => {
-        sendResponse({ response: 'error' + reason.message });
-      });
+        .then((data) => {
+          if (Number.isNaN(data) && `v${chrome.runtime.getManifest().version}` !== data) {
+            sendResponse({ response: true });
+          } else {
+            sendResponse({ response: false });
+          }
+        }).catch((reason) => {
+          sendResponse({ response: `error${reason.message}` });
+        });
     }
     return true;
   },

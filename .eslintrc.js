@@ -13,5 +13,11 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'no-use-before-define': 'off',
+    'no-shadow': [
+      'error',
+      {
+        allow: ['response'],
+      },
+    ],
   },
 };

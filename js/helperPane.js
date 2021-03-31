@@ -342,10 +342,9 @@ function sequentialCartCheck(productArg2) {
         document.getElementById('pauseButton').addEventListener('click',
           pauseOrResume);
 
-        console.log("comeond");
         chrome.runtime.sendMessage({ command: 'checkForUpdate' }, (response) => {
           if (response.response) {
-            document.getElementById('updateNotifier').innerHTML = `New update available. <a href='https://github.com/TimTree/AMD-direct-restock-helper/releases/latest' target='_blank' rel='noopener'>Download now.</a>`;
+            document.getElementById('updateNotifier').innerHTML = 'New update available. <a href=\'https://github.com/TimTree/AMD-direct-restock-helper/releases/latest\' target=\'_blank\' rel=\'noopener\'>Download now.</a>';
           }
         });
       } else {
