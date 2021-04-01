@@ -1,7 +1,8 @@
 # AMD Direct Restock Helper
 
 ---
-<div style="font-weight:700;">
+<div>
+<strong>
 <p>Dear users,</p>
 <p>It is with deep sorrow that I must discontinue this project. I know it's only been two days and there hasn't been a restock since release, but this project is causing me more trouble than it's worth.</p>
 <p>AMD Direct is actively fighting against restock helpers. Last week, they broke directly accessing their stock API, which made me rewrite the script all Wednesday to run to the context of AMD.com. Today (March 30), they added a CAPTCHA in order to check for stock. While I believe it's fixable by web scraping the product listings for stock and directly loading the CAPTCHA to add to cart, I'd have to rewrite the script again the day before a restock. As much as I want to see this through, I sadly can no longer afford the stress, pressure, and anxiety associated with this project.</p>
@@ -10,7 +11,9 @@
 <p>I continue to wish all of you the best getting that new graphics card. May more cards arrive to the hands of those who will actually use it.</p>
 
 <p>~ TimTree</p>
+</strong>
 </div>
+
 ---
 
 [**Download the latest release [Source code (zip)]**](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest)
