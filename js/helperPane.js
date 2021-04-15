@@ -43,6 +43,7 @@
   let isFetching = false;
   let pauseQueue = false;
   let IPBanFlag = false;
+  let CAPTCHAMode = false;
 
   const activeOptions = {
     productToCheck: '6700xt',
@@ -56,19 +57,20 @@
     formData.append('ajax_page_state[theme]', 'amd');
     formData.append('ajax_page_state[theme_token]', '');
     formData.append('ajax_page_state[libraries]', 'amd/amd-scripts,amd/global-styling,amd_core/forms,amd_shop_product/direct-buy,amd_shop_product/direct-buy-analytics,amd_shop_product/direct-buy.pdp,amd_shop_product/direct-buy.url-manager,amd_shop_product/set-cart-token,amd_shop_product/shopping-cart-actions,chosen/drupal.chosen,chosen_lib/chosen.css,core/html5shiv,system/base');
-    const response = await fetch(`https://www.amd.com/en/direct-buy/add-to-cart/${productIDs[productArg]}?_wrapper_format=drupal_ajax`, {
-      method: 'POST',
-      headers: {
-        accept: 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-      body: formData,
-    });
+    const response = CAPTCHAMode ? await fetch(`https://www.amd.com/en/direct-buy/${productIDs[productArg]}`)
+      : await fetch(`https://www.amd.com/en/direct-buy/add-to-cart/${productIDs[productArg]}?_wrapper_format=drupal_ajax`, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json, text/javascript, */*; q=0.01',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: formData,
+      });
     if (response.ok) {
       if (response.url === 'https://www.amd.com/en/maintenance') {
         return 'maintenance';
       }
-      const data = await response.json();
+      const data = CAPTCHAMode ? await response.text() : await response.json();
       return data;
     }
     return response.status;
@@ -84,7 +86,7 @@
   function initiateCartCheck() {
     chrome.runtime.sendMessage({ command: 'clearAMDCookies' }, () => {
       sequentialCartCheck(activeOptions.productToCheck);
-      document.getElementById('currentCheckInfo').innerHTML = `Checking for <strong>${productNames[activeOptions.productToCheck]}</strong>`;
+      document.getElementById('currentCheckInfo').innerHTML = `Checking for <strong>${productNames[activeOptions.productToCheck]} ${CAPTCHAMode ? '[CAPTCHA MODE]' : ''}</strong>`;
     });
   }
 
@@ -211,11 +213,15 @@
               } else if (data === 'maintenance') {
                 console.log(`${productNames[productArg2]} (${counter}) [Listing in maintenance]`);
                 document.getElementById('responseInfo').innerHTML = '[Listing in maintenance]';
-              } else if (data.some((item) => item.text === 'Product added to cart.')) { // In stock
+              } else if ((CAPTCHAMode && data.includes('Add to cart')) || (!CAPTCHAMode && data.some((item) => item.text === 'Product added to cart.'))) { // In stock
                 if (result.soundAlerts) {
                   chrome.runtime.sendMessage({ command: 'playInStockSound' }, () => {});
                 }
-                addToCartAndCheckout(data[6].data);
+                if (CAPTCHAMode) {
+                  window.open(`https://www.amd.com/en/direct-buy/${productIDs[productArg2]}`, '_blank');
+                } else {
+                  addToCartAndCheckout(data[6].data);
+                }
                 chrome.runtime.sendMessage({
                   command: 'notification',
                   options: {
@@ -226,6 +232,11 @@
                 document.getElementById('responseInfo').innerHTML = `[In stock ${new Date(Date.now()).toString()}]`;
                 document.getElementById('pauseDiv').style.display = 'none';
                 return;
+              } else if (!CAPTCHAMode && data.length === 4) {
+                // I need a better way to check for CAPTCHA than the length of the data array...
+                CAPTCHAMode = true;
+                console.log(`${productNames[productArg2]} (${counter}) [CAPTCHA detected. Enabling CAPTCHA mode]`);
+                document.getElementById('responseInfo').innerHTML = '[CAPTCHA detected. Enabling CAPTCHA mode]';
               } else {
                 console.log(`${productNames[productArg2]} (${counter}) [Not in stock]`);
                 document.getElementById('responseInfo').innerHTML = '[Not in stock]';

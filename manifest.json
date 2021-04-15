@@ -56,7 +56,8 @@
       },
       {
         "matches": [
-          "https://www.google.com/recaptcha/api2/anchor?*"
+          "https://www.google.com/recaptcha/api2/anchor?*",
+          "https://www.google.com/recaptcha/enterprise/anchor?*"
         ],
         "all_frames": true,
         "run_at": "document_start",
@@ -64,11 +65,10 @@
       },
       {
         "matches": [
-          "https://www.amd.com/en/direct-buy/checkout/payment/*/*",
-          "https://www.amd.com/en/direct-buy/checkout/review/*/*"
+          "https://www.amd.com/en/direct-buy/*"
         ],
         "run_at": "document_idle",
-        "js": ["js/check503.js"]
+        "js": ["js/check503.js", "js/autoClickCartFullSpecifications.js"]
       }
     ],
     "permissions": [
