@@ -1,22 +1,14 @@
 # AMD Direct Restock Helper
 
----
-<div>
-<strong>
-<p>Dear users,</p>
-<p>It is with deep sorrow that I must discontinue this project. I know it's only been two days and there hasn't been a restock since release, but this project is causing me more trouble than it's worth.</p>
-<p>AMD Direct is actively fighting against restock helpers. Last week, they broke directly accessing their stock API, which made me rewrite the script all Wednesday to run to the context of AMD.com. Today (March 30), they added a CAPTCHA in order to check for stock. While I believe it's fixable by web scraping the product listings for stock and directly loading the CAPTCHA to add to cart, I'd have to rewrite the script again the day before a restock. As much as I want to see this through, I sadly can no longer afford the stress, pressure, and anxiety associated with this project.</p>
-<p>This also means the technical writeup will no longer happen, since there's little point discussing methodology that no longer works. (I haven't started writing it anyway.)</p>
-<p>If you'd like to continue the work done on this project, feel free to fork/clone this repo. I am more than happy to answer any clarifying questions via the contact methods at the end of the FAQ.</p>
-<p>I continue to wish all of you the best getting that new graphics card. May more cards arrive to the hands of those who will actually use it.</p>
+[**Download the latest release**](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest)
 
-<p>~ TimTree</p>
-</strong>
+<div>
+<b>Email</b>: thetimhsu at Google's mail<br/>
+<b>Discord</b>: TimTree#1041<br/>
+<a href="https://www.paypal.com/donate/?business=K7J6KRK6M9PKS&item_name=Support+projects+and+initiatives+from+Timothy+Hsu+%28TimTree%29&currency_code=USD"><b>Donate via PayPal</b></a>
 </div>
 
 ---
-
-[**Download the latest release [Source code (zip)]**](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest)
 
 Buying a new graphics card at MSRP is incredibly hard these days, thanks to sky-high demand from gamers, cryptocurrency miners, and scalpers. It oftentimes feels impossible to beat the bots before they snatch the cards.
 
@@ -30,9 +22,9 @@ Other open-source restock helpers include this [Python program for Amazon](https
 
 ## Does it work?
 
-On March 25, 2021, I successfully purchased the RX 6800 XT at AMD Direct thanks to the helper. Here's my proof of purchase. (I'll update with a photo of my card once I receive it.)
+On March 25, 2021, I successfully purchased the RX 6800 XT at AMD Direct thanks to the helper. Here's my proof of purchase.
 
-![My order confirmation](img/README/MyOrderConfirmation.png)
+![My order confirmation](img/README/AMDOrderProof.jpg)
 
 ## Disclaimers
 
@@ -58,7 +50,7 @@ To use the helper, you'll need the latest version of **Google Chrome** or **Chro
 
 I strongly recommend using the helper in a [separate Chrome profile](https://linuxhint.com/use_multiple_profiles_simultaneously_google_chrome/) so it doesn't interfere with your normal browsing data.
 
-1) Download the `Source code (zip)` of the [latest release of AMD Direct Restock Helper](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest).
+1) Download the [latest release of AMD Direct Restock Helper](https://github.com/TimTree/AMD-direct-restock-helper/releases/latest).
 
 2) Unzip the download. One folder should be extracted.
 
@@ -123,7 +115,8 @@ The helper keeps a running count of the amount of stock checks, as well as the r
 |Response |Description  |
 --- | --- |
 |**Not in stock**|The product is not currently in stock.|
-|**Listing in maintenance**|When checking for stock, AMD stock API redirected to a maintenance page. This typically means the product isn't in stock, and it should change back to "Not in stock" when a restock nears.<br />If you get this message on an item in stock, it means AMD is onto us and broke the helper. Fun fact: this actually happened during my initial runs. Please [file an issue](https://github.com/TimTree/AMD-direct-restock-helper/issues) if you encounter this. |
+|**Listing in maintenance**|When checking for stock, the AMD stock API redirected to a maintenance page. This typically means the product isn't in stock, and it should change back to "Not in stock" when a restock nears.<br />If you get this message on an item in stock, it means AMD is onto us and broke the helper. Fun fact: this actually happened during my initial runs. Please [file an issue](https://github.com/TimTree/AMD-direct-restock-helper/issues) if you encounter this. |
+|**CAPTCHA Detected. Enabling CAPTCHA mode**|At the moment, AMD Direct requires a CAPTCHA to check for stock. Subsequent stock checks will use **CAPTCHA mode**, which web scrapes listing pages for stock rather than directly querying the API. The checkout flow also changes (see below). |
 |**Temp IP ban - 403**|Your IP address has been temporarily banned from AMD.com for refreshing too quickly.<br />The ban usually lasts for a few minutes. In the meantime, pause the checks and readjust the min delay between requests. (>=2000 ms is probably safe.) |
 |**Client error - 4xx**|Any HTTP 400 error that isn't an IP ban.<br />I haven't encountered this yet, but just in case, it's here. Stock checks will continue as normal. |
 |**Server error - 5xx**|AMD's servers are overloaded with too many other people checking for stock.<br />You'll often see this on Thursday mornings (when restocks usually occur), but don't worry. While everyone's fighting for the checkout page, you have an advantage with auto-refresh. ;) |
@@ -132,7 +125,15 @@ The helper keeps a running count of the amount of stock checks, as well as the r
 |**Unhandled parsing error**|An unknown error occurred related to handling the data the AMD stock API returned.<br />Stock checks will continue as normal. You should [file an issue](https://github.com/TimTree/AMD-direct-restock-helper/issues) for these errors. |
 |**Unhandled connection error**|An unknown error occurred related to retrieving the data the AMD stock API.<br />Stock checks will continue as normal. You should [file an issue](https://github.com/TimTree/AMD-direct-restock-helper/issues) for these errors.  |
 
-When a restock happens, the helper automatically opens the checkout page and clicks "PayPal Checkout" (if Use PayPal is checked). Provided you've enabled PayPal One Touch, PayPal automatically logs you in and take you to this page.
+When a restock happens, the following will happen:
+
+**If CAPTCHA mode is active**, the helper redirects to the desired product listing page. It will automatically initiate the required CAPTCHA to add to cart.
+
+![CAPTCHA mode CAPTCHA](img/README/CAPTCHAModeCAPTCHA.png)
+
+**If CAPTCHA mode is not active**, the helper redirects straight to the checkout page.
+
+On the checkout page, the helper automatically clicks "PayPal Checkout" (if Use PayPal is checked). Provided you've enabled PayPal One Touch, PayPal automatically logs you in and take you to this page.
 
 ![PayPal popup](img/README/PayPalPopup.png)
 
@@ -210,11 +211,7 @@ The extension also cannot auto-update, killing any chance of me pulling a bait-a
 |**Cookies**|Necessary to periodically clear cookies from AMD.com.<br />There is a separate ban for refreshing too much with the same cookies, which the extension circumvents.|
 |**Notifications**|Necessary to send notifications when a product is in stock or if you're temporarily IP banned |
 
-**Any other questions, success stories, or just want to reach out?**
-
-**Email:** thetimhsu at Google's mail
-
-**Discord:** TimTree#1041
+**Any other questions, success stories, want to donate, or just want to reach out? Contact details are on top of the README.**
 
 ## License and credits
 
