@@ -60,7 +60,7 @@ I strongly recommend using the helper in a [separate Chrome profile](https://lin
 
 ![Load unpacked extension](img/README/LoadUnpacked.png)
 
-Congrats, you have installed AMD Direct Restock Helper!
+Congrats, you have installed AMD Direct Restock Helper! You can optionally [allow in incognito](https://www.howtogeek.com/702123/how-to-enable-an-extension-in-chromes-incognito-mode/) if you want to use the helper in incognito mode.
 
 ### Updating the helper
 
@@ -147,9 +147,9 @@ If you're booted back to the main products page after PLACE ORDER, that doesn't 
 
 ### Checking for multiple products
 
-You can only check for one product at a time per Chrome profile. This is intentional to ensure you don't unexpectedly add multiple products to your cart.
+Per Chrome profile, you can only check for one product on a normal tab and one product on an incognito tab. This is intentional to ensure you don't unexpectedly add multiple products to your cart.
 
-But let's say you want to check for the RX 6800, RX 6800 XT, and RX 6900 XT and am willing to buy whichever shows up in stock first. Totally understandable; not every graphics card model will restock, and you want to cover your bases. All you have to do is use [separate Chrome profiles](https://linuxhint.com/use_multiple_profiles_simultaneously_google_chrome/) for each product. You'll have to repeat the installation multiple times, but it's worth the hassle, right?
+But let's say you want to check for more products, like the RX 6800, RX 6800 XT, and RX 6900 XT and am willing to buy whichever shows up in stock first. Totally understandable; not every graphics card model will restock, and you want to cover your bases. All you have to do is use [separate Chrome profiles](https://linuxhint.com/use_multiple_profiles_simultaneously_google_chrome/) for each product. You'll have to repeat the installation multiple times, but it's worth the hassle, right?
 
 Keep in mind you should **adjust the min delay between requests** for each product, as you're now pinging the AMD server twice as much, thrice as much, etc. For example, if you use a 2000ms delay with one product, setting the delay to 4000ms for two products will maintain the same request cadence. As checking for more products increases the necessary delay, it's up to you to determine cost/benefit.
 

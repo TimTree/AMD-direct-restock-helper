@@ -380,7 +380,7 @@
       } else {
         banner.innerHTML = `
             <div style="margin: 0.3em 0;">
-                AMD Direct Restock Helper can only run on one tab to prevent unexpectedly adding multiple items to cart.
+                AMD Direct Restock Helper can only run on one normal tab and one incognito tab to prevent unexpectedly adding multiple items to cart.
             </div>
             <div style="margin: 0.3em 0;">
                 If you have multiple AMD.com tabs open, close all of them except this tab and refresh.
