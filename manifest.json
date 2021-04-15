@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "AMD Direct Restock Helper",
     "description": "Checks for stock and initiates checkout for hard-to-buy products from AMD Direct (AMD.com)",
-    "version": "1.0",
+    "version": "1.2",
     "icons": {
         "48": "img/icon48.png",
         "128": "img/icon128.png"

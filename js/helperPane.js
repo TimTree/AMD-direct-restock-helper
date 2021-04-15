@@ -13,6 +13,7 @@
     '6700xt': 'RX 6700 XT',
     6800: 'RX 6800',
     '6800xt': 'RX 6800 XT',
+    '6800xtmb': 'RX 6800 XT Midnight Black',
     '6900xt': 'RX 6900 XT',
     '5600x': 'Ryzen 5600x',
     '5800x': 'Ryzen 5800x',
@@ -26,6 +27,7 @@
     '6700xt': 5496921400,
     6800: 5458373400,
     '6800xt': 5458372800,
+    '6800xtmb': 5496921500,
     '6900xt': 5458372200,
     '5600x': 5450881700,
     '5800x': 5450881600,
@@ -307,6 +309,7 @@
                     <option value="6700xt">RX 6700 XT</option>
                     <option value="6800">RX 6800</option>
                     <option value="6800xt">RX 6800 XT</option>
+                    <option value="6800xtmb">RX 6800 XT MB</option>
                     <option value="6900xt">RX 6900 XT</option>
                     <option value="5600x">Ryzen 5600x</option>
                     <option value="5800x">Ryzen 5800x</option>
