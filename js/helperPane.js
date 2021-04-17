@@ -151,7 +151,9 @@
   function showStatusPane() {
     document.getElementById('startDiv').style.display = 'none';
     document.getElementById('statusPane').style.display = 'flex';
-    initiateCartCheck();
+    chrome.runtime.sendMessage({ command: 'addGACookie' }, () => {
+      initiateCartCheck();
+    });
   }
 
   function pauseOrResume() {

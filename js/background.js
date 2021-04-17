@@ -5,7 +5,7 @@ function clearAMDCookies(callback) {
   chrome.cookies.getAll({ url: 'https://www.amd.com' }, (cookies) => {
     let cookiesProcessed = 0;
     if (cookies.length === 0) { callback(); } else {
-      cookies.forEach((item, index, array) => {
+      cookies.filter((cookieName) => !['OptanonConsent', 'pmuser_country', '_ga'].includes(cookieName.name)).forEach((item, index, array) => {
         chrome.cookies.remove({
           url: 'https://www.amd.com',
           name: item.name,
@@ -16,6 +16,29 @@ function clearAMDCookies(callback) {
           }
         });
       });
+    }
+  });
+}
+
+function addGACookie(callback) {
+  chrome.cookies.get({
+    url: 'https://www.amd.com',
+    name: '_ga',
+  }, (cookie) => {
+    if (cookie === null) {
+      const GARandom1 = Math.floor((Math.random() * 9999999999) + 1000000000);
+      const GARandom2 = Math.floor((Math.random() * 9999999999) + 1000000000);
+      chrome.cookies.set({
+        url: 'https://www.amd.com',
+        domain: '.amd.com',
+        name: '_ga',
+        value: `GA1.2.${GARandom1}.${GARandom2}`,
+        expirationDate: new Date().getTime() + 63115200,
+      }, () => {
+        callback();
+      });
+    } else {
+      callback();
     }
   });
 }
@@ -44,6 +67,9 @@ async function checkForUpdate() {
 chrome.runtime.onMessage.addListener(
   (request, sender, sendResponse) => {
     switch (request.command) {
+      case 'addGACookie':
+        addGACookie(sendResponse);
+        break;
       case 'clearAMDCookies':
         clearAMDCookies(sendResponse);
         break;
