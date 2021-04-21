@@ -7,6 +7,7 @@
     soundAlerts: true,
     usePayPal: true,
     autoPromotional: true,
+    autoStartDueToResetCookieRefresh: false,
   };
 
   const productNames = {
@@ -42,8 +43,8 @@
   let requestTimeout;
   let isFetching = false;
   let pauseQueue = false;
-  let IPBanFlag = false;
   let CAPTCHAMode = false;
+  let resetCookieFlag = false;
 
   const activeOptions = {
     productToCheck: '6700xt',
@@ -84,10 +85,18 @@
   }
 
   function initiateCartCheck() {
-    chrome.runtime.sendMessage({ command: 'clearAMDCookies' }, () => {
+    if (resetCookieFlag) {
+      chrome.runtime.sendMessage({ command: 'clearAMDCookies' }, () => {
+        chrome.storage.local.set({
+          autoStartDueToResetCookieRefresh: true,
+        }, () => {
+          window.location.reload();
+        });
+      });
+    } else {
       sequentialCartCheck(activeOptions.productToCheck);
       document.getElementById('currentCheckInfo').innerHTML = `Checking for <strong>${productNames[activeOptions.productToCheck]} ${CAPTCHAMode ? '[CAPTCHA MODE]' : ''}</strong>`;
-    });
+    }
   }
 
   function changeProductToCheck() {
@@ -145,6 +154,27 @@
         document.getElementById('usePayPal').checked = items.usePayPal;
         document.getElementById('autoPromotional').checked = items.autoPromotional;
       }
+      if (items.autoStartDueToResetCookieRefresh) {
+        chrome.storage.local.set({
+          autoStartDueToResetCookieRefresh: false,
+        }, () => {
+          if (document.querySelector('h1').innerHTML === 'The page you are trying to access is currently unavailable' || document.querySelector('h1').innerHTML === 'Access denied') {
+            if (items.soundAlerts) {
+              chrome.runtime.sendMessage({ command: 'playIPBanSound' }, () => {});
+            }
+            chrome.runtime.sendMessage({
+              command: 'notification',
+              options: {
+                title: 'Temporarily IP banned from AMD.com', message: 'Consider pausing the script for a few minutes and increasing the min delay between requests.', iconUrl: '../img/icon128.png', type: 'basic',
+              },
+            }, () => {});
+          } else {
+            document.getElementById('startButton').disabled = true;
+            setTimeout(() => { showStatusPane(); },
+              Math.floor((Math.random() * (1250 - 750 + 1))) + 750);
+          }
+        });
+      }
     });
   }
 
@@ -175,74 +205,55 @@
   function sequentialCartCheck(productArg2) {
     chrome.storage.local.get(defaultOptions, (result) => {
       isFetching = true;
-      const time1 = performance.now();
       fetchAsync(productArg2)
         .then((data) => {
           isFetching = false;
-          const time2 = performance.now();
-          let delayDeduction;
-          if (time2 - time1 < activeOptions.minDelay) {
-            delayDeduction = time2 - time1;
-          } else {
-            delayDeduction = activeOptions.minDelay;
-          }
           counter += 1;
           document.getElementById('countInfo').innerHTML = counter;
           try {
             if (data === 403) {
-              console.log(`${productNames[productArg2]} (${counter}) [Temp IP ban - 403 (Consider pausing/increasing min delay)]`);
-              document.getElementById('responseInfo').innerHTML = '<span style=\'color:#de0000;\'>[Temp IP ban - 403 (Consider pausing/increasing min delay)]</span>';
-              if (!IPBanFlag) {
-                if (result.soundAlerts) {
-                  chrome.runtime.sendMessage({ command: 'playIPBanSound' }, () => {});
-                }
-                chrome.runtime.sendMessage({
-                  command: 'notification',
-                  options: {
-                    title: 'Temporarily IP banned from AMD.com', message: 'Consider pausing the script for a few minutes and increasing the min delay between requests.', iconUrl: '../img/icon128.png', type: 'basic',
-                  },
-                }, () => {});
-                IPBanFlag = true;
+              resetCookieFlag = true;
+              console.log(`${productNames[productArg2]} (${counter}) [Cookie limit potentially reached. Resetting cookies...]`);
+              document.getElementById('responseInfo').innerHTML = '[Cookie limit potentially reached. Resetting cookies...]';
+            } else if (data >= 500 && data <= 599) {
+              console.log(`${productNames[productArg2]} (${counter}) [Server error - ${data}]`);
+              document.getElementById('responseInfo').innerHTML = `[Server error - ${data}]`;
+            } else if (data >= 400 && data <= 499) {
+              console.log(`${productNames[productArg2]} (${counter}) [Client error - ${data}]`);
+              document.getElementById('responseInfo').innerHTML = `[Client error - ${data}]`;
+            } else if (data === 'maintenance') {
+              console.log(`${productNames[productArg2]} (${counter}) [Listing in maintenance]`);
+              document.getElementById('responseInfo').innerHTML = '[Listing in maintenance]';
+            } else if (data === 'cookies reset') {
+              console.log(`(${counter}) [Cookies reset]`);
+              document.getElementById('responseInfo').innerHTML = '[Cookies reset]';
+            } else if ((CAPTCHAMode && data.includes('Add to cart')) || (!CAPTCHAMode && data.some((item) => item.text === 'Product added to cart.'))) { // In stock
+              if (result.soundAlerts) {
+                chrome.runtime.sendMessage({ command: 'playInStockSound' }, () => {});
               }
-            } else {
-              if (IPBanFlag) { IPBanFlag = false; }
-              if (data >= 500 && data <= 599) {
-                console.log(`${productNames[productArg2]} (${counter}) [Server error - ${data}]`);
-                document.getElementById('responseInfo').innerHTML = `[Server error - ${data}]`;
-              } else if (data >= 400 && data <= 499) {
-                console.log(`${productNames[productArg2]} (${counter}) [Client error - ${data}]`);
-                document.getElementById('responseInfo').innerHTML = `[Client error - ${data}]`;
-              } else if (data === 'maintenance') {
-                console.log(`${productNames[productArg2]} (${counter}) [Listing in maintenance]`);
-                document.getElementById('responseInfo').innerHTML = '[Listing in maintenance]';
-              } else if ((CAPTCHAMode && data.includes('Add to cart')) || (!CAPTCHAMode && data.some((item) => item.text === 'Product added to cart.'))) { // In stock
-                if (result.soundAlerts) {
-                  chrome.runtime.sendMessage({ command: 'playInStockSound' }, () => {});
-                }
-                if (CAPTCHAMode) {
-                  window.open(`https://www.amd.com/en/direct-buy/${productIDs[productArg2]}`, '_blank');
-                } else {
-                  addToCartAndCheckout(data[6].data);
-                }
-                chrome.runtime.sendMessage({
-                  command: 'notification',
-                  options: {
-                    title: `${productNames[productArg2]} IN STOCK`, message: 'GO, GO, GO!!!', iconUrl: '../img/icon128.png', type: 'basic',
-                  },
-                }, () => {});
-                console.log(`${productNames[productArg2]} (${counter}) [In stock ${new Date(Date.now()).toString()}]`);
-                document.getElementById('responseInfo').innerHTML = `[In stock ${new Date(Date.now()).toString()}]`;
-                document.getElementById('pauseDiv').style.display = 'none';
-                return;
-              } else if (!CAPTCHAMode && data.length === 4) {
-                // I need a better way to check for CAPTCHA than the length of the data array...
-                CAPTCHAMode = true;
-                console.log(`${productNames[productArg2]} (${counter}) [CAPTCHA detected. Enabling CAPTCHA mode]`);
-                document.getElementById('responseInfo').innerHTML = '[CAPTCHA detected. Enabling CAPTCHA mode]';
+              if (CAPTCHAMode) {
+                window.open(`https://www.amd.com/en/direct-buy/${productIDs[productArg2]}`, '_blank');
               } else {
-                console.log(`${productNames[productArg2]} (${counter}) [Not in stock]`);
-                document.getElementById('responseInfo').innerHTML = '[Not in stock]';
+                addToCartAndCheckout(data[6].data);
               }
+              chrome.runtime.sendMessage({
+                command: 'notification',
+                options: {
+                  title: `${productNames[productArg2]} IN STOCK`, message: 'GO, GO, GO!!!', iconUrl: '../img/icon128.png', type: 'basic',
+                },
+              }, () => {});
+              console.log(`${productNames[productArg2]} (${counter}) [In stock ${new Date(Date.now()).toString()}]`);
+              document.getElementById('responseInfo').innerHTML = `[In stock ${new Date(Date.now()).toString()}]`;
+              document.getElementById('pauseDiv').style.display = 'none';
+              return;
+            } else if (!CAPTCHAMode && data.length === 4) {
+              // I need a better way to check for CAPTCHA than the length of the data array...
+              CAPTCHAMode = true;
+              console.log(`${productNames[productArg2]} (${counter}) [CAPTCHA detected. Enabling CAPTCHA mode]`);
+              document.getElementById('responseInfo').innerHTML = '[CAPTCHA detected. Enabling CAPTCHA mode]';
+            } else {
+              console.log(`${productNames[productArg2]} (${counter}) [Not in stock]`);
+              document.getElementById('responseInfo').innerHTML = '[Not in stock]';
             }
           } catch (e) {
             console.log(`${productNames[productArg2]} (${counter}) [Unhandled parsing error - ${e}]`);
@@ -255,19 +266,12 @@
                 document.getElementById('pauseButton').disabled = false;
               } else {
                 requestTimeout = setTimeout(() => { initiateCartCheck(); },
-                  activeOptions.minDelay - delayDeduction);
+                  activeOptions.minDelay);
               }
             }
           }
         }).catch((reason) => {
           isFetching = false;
-          const time2 = performance.now();
-          let delayDeduction;
-          if (time2 - time1 < activeOptions.minDelay) {
-            delayDeduction = time2 - time1;
-          } else {
-            delayDeduction = activeOptions.minDelay;
-          }
           console.log(`Connection error: ${reason.message}`);
           if (reason.message === 'Failed to fetch') {
             document.getElementById('countInfo').innerHTML = counter;
@@ -282,7 +286,7 @@
             pauseOrResume();
           } else {
             requestTimeout = setTimeout(() => { initiateCartCheck(); },
-              activeOptions.minDelay - delayDeduction);
+              activeOptions.minDelay);
           }
         });
     });

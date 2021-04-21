@@ -5,7 +5,7 @@ function clearAMDCookies(callback) {
   chrome.cookies.getAll({ url: 'https://www.amd.com' }, (cookies) => {
     let cookiesProcessed = 0;
     if (cookies.length === 0) { callback(); } else {
-      cookies.filter((cookieName) => !['OptanonConsent', 'pmuser_country', '_ga'].includes(cookieName.name)).forEach((item, index, array) => {
+      cookies.forEach((item, index, array) => {
         chrome.cookies.remove({
           url: 'https://www.amd.com',
           name: item.name,
